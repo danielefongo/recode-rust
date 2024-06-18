@@ -1,0 +1,11 @@
+return {
+  include = { "lua/recode-rust/.+$" },
+  exclude = {
+    "lua/tests/.+$",
+  },
+  modules = {
+    ["recode-rust.*"] = "lua/",
+  },
+  includeuntestedfiles = true,
+}
+-- vim:ft=lua
