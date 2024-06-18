@@ -106,4 +106,22 @@ function helpers.temp_file(content)
   return filename
 end
 
+function helpers.register_buffer(buffers, filename, text)
+  buffers[filename] = helpers.buf_with_fake_file(filename, "rust", text)
+  return buffers[filename]
+end
+
+function helpers.unregister_buffers(buffers)
+  for _, buffer in pairs(buffers) do
+    vim.api.nvim_buf_delete(buffer, { force = false, unload = true })
+  end
+  buffers = {}
+end
+
+function helpers.apply_actions(buffers, actions)
+  for _, buffer in pairs(buffers) do
+    helpers.buf_apply_actions(buffer, actions)
+  end
+end
+
 return helpers

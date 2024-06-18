@@ -1,3 +1,3 @@
-return function(value)
-  return value
-end
+return {
+  require("recode-rust.refactors.rename"),
+}
