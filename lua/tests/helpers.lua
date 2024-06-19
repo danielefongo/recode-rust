@@ -30,6 +30,10 @@ function helpers.setup(opts)
   opts = opts or {}
 
   setup_test_cov()
+
+  after_each(function()
+    vim.wait(100)
+  end)
 end
 
 function helpers.with_lsp(lambda, ...)
@@ -38,9 +42,14 @@ function helpers.with_lsp(lambda, ...)
 
   local co = coroutine.running()
   vim.defer_fn(function()
-    out = lambda(unpack(args))
+    local succeed, function_out = pcall(lambda, unpack(args))
+
+    if not succeed then
+      coroutine.resume(co)
+    end
 
     first_lsp_call = false
+    out = function_out
 
     coroutine.resume(co)
   end, (first_lsp_call and 5000) or 0)
@@ -113,7 +122,9 @@ end
 
 function helpers.unregister_buffers(buffers)
   for _, buffer in pairs(buffers) do
-    vim.api.nvim_buf_delete(buffer, { force = false, unload = true })
+    pcall(function()
+      vim.api.nvim_buf_delete(buffer, { force = false, unload = true })
+    end)
   end
   buffers = {}
 end
